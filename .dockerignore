@@ -1,0 +1,9 @@
+.git
+.gitmodules
+backend
+frontend
+cli
+scripts
+node_modules
+.angular
+dist
