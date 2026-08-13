@@ -1,0 +1,65 @@
+<main class="app-shell">
+  <section class="panel">
+    <h1>Snip</h1>
+    <p class="subtitle">Tiny URL shortener frontend</p>
+
+    <form (submit)="submitUrl($event)" class="url-form">
+      <label for="urlInput">Paste URL</label>
+      <div class="row">
+        <input
+          id="urlInput"
+          type="url"
+          [value]="urlInput()"
+          (input)="onUrlInput($any($event.target).value)"
+          placeholder="https://example.com"
+          autocomplete="off"
+        />
+        <button type="submit" [disabled]="loading()">
+          {{ loading() ? 'Shortening...' : 'Shorten' }}
+        </button>
+      </div>
+    </form>
+
+    @if (createdShortUrl()) {
+      <p class="success">
+        Short link:
+        <a [href]="createdShortUrl()" target="_blank" rel="noopener noreferrer">{{ createdShortUrl() }}</a>
+      </p>
+    }
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+  </section>
+
+  <section class="panel">
+    <h2>All Links</h2>
+
+    @if (links().length === 0) {
+      <p class="muted">No links yet.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Original URL</th>
+            <th>Hits</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (link of links(); track trackByCode($index, link)) {
+            <tr>
+              <td>
+                <a [href]="link.shortUrl" target="_blank" rel="noopener noreferrer">{{ link.code }}</a>
+              </td>
+              <td>
+                <a [href]="link.url" target="_blank" rel="noopener noreferrer">{{ link.url }}</a>
+              </td>
+              <td>{{ link.hits }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+</main>
