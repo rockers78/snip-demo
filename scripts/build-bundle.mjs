@@ -158,14 +158,14 @@ writeText(
 );
 
 const bundleCommitted = commitIfChanged(paths.bundle, 'Generate bundle release');
-if (bundleCommitted && withPush) {
+if (withPush) {
   pushBundle();
 }
 
 git(['add', 'backend', 'frontend', 'cli', 'bundle'], repoRoot);
 
 const mainCommitted = commitIfChanged(repoRoot, 'Update bundle release pointers');
-if (mainCommitted && withPush) {
+if (withPush) {
   pushMain();
 }
 
