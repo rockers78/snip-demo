@@ -9,8 +9,11 @@ Snip is a tiny URL shortener split across one backend and two clients, all livin
 | `backend/` | `backend` | Bun API server with in-memory storage |
 | `frontend/` | `frontend` | Angular 19 web UI |
 | `cli/` | `cli` | Zero-dependency Node CLI |
+| `bundle/` | `bundle` | Generated release output for the full app |
 
 `main` is the superproject. It pins each layer to an exact commit through submodule links.
+
+The `bundle` branch is generated output. Do not hand-edit it; rebuild it from `main` with `scripts/build-bundle.mjs`.
 
 ## API Contract
 
@@ -56,3 +59,7 @@ git push
 ```
 
 Repeat the same pattern for `frontend` and `cli`.
+
+## Bundle Release
+
+`scripts/build-bundle.mjs` assembles the generated `bundle` submodule from the three source branches, commits inside `bundle/`, and then bumps the `main` pointers. Pass `--push` only when you want it to publish both `bundle` and `main`.
