@@ -17,14 +17,43 @@ const paths = {
 };
 
 function bin(name) {
-  if (process.platform === 'win32') {
-    return `${name}.cmd`;
-  }
-
   return name;
 }
 
 function run(command, args, cwd = repoRoot) {
+  if (process.platform === 'win32' && (command === 'npm' || command === 'npx')) {
+    const quoted = [command, ...args]
+      .map((arg) => {
+        if (arg.length === 0) {
+          return '""';
+        }
+
+        if (/\s|"/.test(arg)) {
+          return `"${arg.replace(/"/g, '\\"')}"`;
+        }
+
+        return arg;
+      })
+      .join(' ');
+
+    const result = spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', quoted], {
+      cwd,
+      encoding: 'utf8',
+      stdio: 'pipe',
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (result.status !== 0) {
+      const message = [result.stdout, result.stderr].filter(Boolean).join('\n').trim();
+      throw new Error(message || `${command} ${args.join(' ')} failed with exit code ${result.status}`);
+    }
+
+    return result.stdout.trim();
+  }
+
   const result = spawnSync(command, args, {
     cwd,
     encoding: 'utf8',
